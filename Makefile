@@ -1,29 +1,33 @@
 .PHONY: all clean check wheel sdist
 
 ifeq ($(OS),Windows_NT)
-EXE=.exe
+BIN=./venv/Scripts
 else
-EXE=
+BIN=./venv/bin
 endif
 
-BUILDOUT=bin/buildout$(EXE)
+PIP=$(BIN)/pip
+PYTHON=$(BIN)/python
+PIPINSTALL=$(PIP) install -q
+SETUP.PY=$(BIN)/python setup.py -q
+FLAKE8=$(BIN)/flake8
 
 all: check wheel
 
 clean:
-	rm -rf *.pyc *~ bin build dist develop-eggs .eggs eggs parts .installed.cfg *.egg-info
+	rm -rf *.pyc *~ bin build dist *.egg-info venv
 
-$(BUILDOUT):
-	python bootstrap-buildout.py
+venv:
+	virtualenv -q venv
+	$(PIPINSTALL) flake8 
+	$(PIPINSTALL) -r requirements.txt
+	$(PIPINSTALL) -e .
 
-eggs/%.egg bin/%$(EXE): $(BUILDOUT)
-	bin/buildout -qqq
+wheel: venv
+	$(SETUP.PY) bdist_wheel
 
-wheel: eggs/wheel*.egg $(BUILDOUT)
-	bin/py setup.py bdist_wheel
+sdist: venv
+	$(SETUP.PY) sdist
 
-sdist: $(BUILDOUT)
-	bin/py setup.py sdist
-
-check: bin/flake8$(EXE)
-	bin/flake8 src
+check: venv
+	$(FLAKE8) globcopy

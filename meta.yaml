@@ -1,0 +1,16 @@
+package:
+  name: globcopy
+  version: "10"
+
+requirements:
+  build:
+    - python
+  run:
+    - python
+    - glob2
+
+source:
+  path: x
+
+build:
+  include_recipe: False

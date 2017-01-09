@@ -1,0 +1,12 @@
+.eggs/
+eggs/
+*~
+*.pyc
+*.spec
+develop-eggs/
+bin/
+build/
+dist/
+*.egg-info/
+.installed.cfg
+venv/
